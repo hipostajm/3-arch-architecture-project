@@ -1,0 +1,2 @@
+curl -o - -I -X "DELETE" http://127.0.0.1:5000/users/1
+curl --header "Content-Type: application/json" -X "POST" --data '{"firstName":"imie","lastName":"nazwisko","birthYear":1111,"group":"admin"}' http://localhost:5000/users/
