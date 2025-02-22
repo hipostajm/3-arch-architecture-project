@@ -30,8 +30,6 @@ class UserController():
             return self.custom_responses[status_code], status_code
     
     def add_user(self, user_data: dict):
-        users = self._repository.get_users()
-        
         if "firstName" in user_data.keys() and "lastName" in user_data.keys() and "birthYear" in user_data.keys() and "group" in user_data.keys() and user_data["group"] in ["user", "premium", "admin"] and type(user_data["birthYear"]) == int and type(user_data["firstName"]) == str and type(user_data["lastName"]) == str:
             status_code = 200
             
@@ -41,13 +39,17 @@ class UserController():
                 id = self._repository.free_ids[0]
             else:
                 id = self._repository.next_id
-                self._repository.next_id += 1
+                self._repository.append_next_id()
             
             user_data["id"] = id
             
             self._repository.add_user(user_data)
             return self.custom_responses[status_code], status_code
+        
         else:
             status_code = 400
             return self.custom_responses[status_code], status_code
-            
+        
+    def change_user_data(self,id: int ,user_data: dict):
+        ... # czy powinna być możliwość zmieniania id??? (według mnie nie ale who knows) i czy sprawdzanie tego co się zmienia powinno być zmienione po stronie repo???? (tutaj to mam dylemat) 
+        

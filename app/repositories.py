@@ -39,6 +39,9 @@ class UserRepository():
                 self.free_ids.append(id)
                 del self.users[i]
                 break
+        
+    def append_next_id(self):
+        self.next_id += 1
     
     def add_user(self, data: dict):
         self.users.append(User(id = data["id"], first_name=data["firstName"], last_name=data["lastName"],birth_year=data["birthYear"],group=data["group"]))

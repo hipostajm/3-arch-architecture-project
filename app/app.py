@@ -15,14 +15,20 @@ def get_users(id: int = None):
     return response
 
 @app.delete("/users/<int:id>")
-def delete_user(id: int):
+def delete_users(id: int):
     response = controller.delete_user(id)
     return response
 
 @app.post("/users/")
-def post_user():
+def post_users():
     data = request.get_json()
     response = controller.add_user(data)
+    return response
+
+@app.patch("/users/<int:id>")
+def patch_users(id: int):
+    data = request.get_json()
+    response = controller.change_user_data(id, data)
     return response
 
 if __name__ == "__main__":
