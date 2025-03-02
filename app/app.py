@@ -1,12 +1,23 @@
 from flask import Flask, request
-from controllers import UserController
-from repositories import UserRepository
+from app.controllers import UserController
+from app.repositories import UserRepository, User
 
 app = Flask(__name__)
 
 custom_responses = {404: app.redirect("https://http.cat/404"), 200: app.redirect("https://http.cat/200"), 400: app.redirect("https://http.cat/400")}
 
-controller = UserController(UserRepository(group_values=["user", "premium", "admin"]), custom_responses=custom_responses)
+repo = UserRepository(group_values=["user", "premium", "admin"])
+controller = UserController(repo, custom_responses=custom_responses)
+
+def add_to_repo(user: User):
+    repo.users.append(user)
+    
+def get_from_repo():
+    return repo.users
+
+def clear_repo():
+    repo.users = []
+    repo.free_ids = []
 
 @app.get("/users/")
 @app.get("/users/<int:id>")

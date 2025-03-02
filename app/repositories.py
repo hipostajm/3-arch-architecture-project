@@ -31,6 +31,9 @@ class User():
     
     def set_group(self, group):
         self.group = group
+    
+    def get_id(self) -> int:
+        return self.id
         
     def get_first_name(self) -> str:
         return self.first_name
@@ -47,7 +50,7 @@ class User():
 
 class UserRepository():
     def __init__(self, group_values: list|tuple[str]):
-        self.users: list[User] = [User(1, "Wocjech", "Oczkowski", 2001, "user")] 
+        self.users: list[User] = [] 
         self.free_ids = []
         self.next_id = len(self.users)+1
         self.group_values = group_values

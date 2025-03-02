@@ -1,4 +1,4 @@
-a = {"a":1,"b":2}
+a = {"a": 1, "b": 2}
+b = {"b": 22, "a": 1}
 
-for i, j in a.items():
-    print(i, j)
+print(a==b)

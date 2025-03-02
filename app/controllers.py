@@ -1,4 +1,4 @@
-from repositories import UserRepository
+from app.repositories import UserRepository
 from flask import Response
 
 class UserController():
@@ -34,7 +34,7 @@ class UserController():
         if {"firstName", "lastName", "birthYear", "group"} == set(user_data.keys()) and user_data["group"] in self._repository.group_values and type(user_data["birthYear"]) == int and type(user_data["firstName"]) == str and type(user_data["lastName"]) == str:
             
             status_code = 200
-            
+           
             id = 0
             
             if self._repository.free_ids:
