@@ -55,7 +55,7 @@ def test_delete_with_valid_data(client: FlaskClient):
     excepted = HTTPStatus.OK
     __init__.add_to_repo(User(id, "I", "N", 2008, "user"))
     response = client.delete(f"/users/{id}")
-    assert response.status_code == excepted
+    assert client.get(f"/users/").json == [] and response.status_code == excepted
     __init__.clear_repo()
 
 def test_delete_with_out_of_range_index(client: FlaskClient):

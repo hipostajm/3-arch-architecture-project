@@ -49,17 +49,18 @@ class User():
         
 
 class UserRepository():
-    def __init__(self, group_values: list|tuple[str]):
+    def __init__(self):
         self.users: list[User] = [] 
         self.free_ids = []
         self.next_id = len(self.users)+1
-        self.group_values = group_values
         
     def get_users(self):
         return self.users
 
     def get_user(self, id):
-        return [user for user in self.users if user.id == id][0]
+        for user in self.users:
+            if user.id == id:
+                return user
     
     def delete_user(self, id):
         for i, user in enumerate(self.users):

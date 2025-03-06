@@ -1,39 +1,36 @@
 from app.repositories import UserRepository
-from flask import Response
+
+class NotFound(Exception):
+    pass
+
+class BadRequest(Exception):
+    pass
 
 class UserController():
-    def __init__(self, repository: UserRepository, custom_responses: dict):
+    def __init__(self, repository: UserRepository, ):
         self._repository = repository
-        self.custom_responses = custom_responses
         
-    def get_users(self, id: int = None) -> tuple[Response, int]:
+    def get_users(self, id: int = None) -> list[dict]|dict:
+
+        users = self._repository.get_users()
 
         if id == None:
-            status_code = 200
-            return [user.to_dict() for user in self._repository.get_users()], status_code
+            return [user.to_dict() for user in users]
         
-        elif id in self._repository.get_users():
-            status_code = 200
-            return self._repository.get_user(id).to_dict(), status_code
+        elif id in users:
+            return self._repository.get_user(id).to_dict()
         
         else:
-            status_code = 404
-            return self.custom_responses[status_code], status_code
+            raise NotFound
     
-    def delete_user(self, id: int = None) -> tuple[Response, int]:
+    def delete_user(self, id: int = None) -> None:
         if id == None or id not in self._repository.get_users():
-            status_code = 404
-            return self.custom_responses[status_code], status_code 
-        
+            raise NotFound 
         else:
             self._repository.delete_user(id)
-            status_code = 200
-            return self.custom_responses[status_code], status_code
     
-    def add_user(self, user_data: dict) -> tuple[Response, int]:
-        if {"firstName", "lastName", "birthYear", "group"} == set(user_data.keys()) and user_data["group"] in self._repository.group_values and type(user_data["birthYear"]) == int and type(user_data["firstName"]) == str and type(user_data["lastName"]) == str:
-            
-            status_code = 200
+    def add_user(self, user_data: dict) -> None:
+        if {"firstName", "lastName", "birthYear", "group"} == set(user_data.keys()) and user_data["group"] in ["user", "premium", "admin"] and type(user_data["birthYear"]) == int and type(user_data["firstName"]) == str and type(user_data["lastName"]) == str:
            
             id = 0
             
@@ -44,15 +41,12 @@ class UserController():
                 self._repository.append_next_id()
             
             user_data["id"] = id
-            
             self._repository.add_user(user_data)
-            return self.custom_responses[status_code], status_code
         
         else:
-            status_code = 400
-            return self.custom_responses[status_code], status_code
+            raise BadRequest
         
-    def change_user_data(self,id: int ,user_data: dict) -> tuple[Response, int]:
+    def change_user_data(self,id: int ,user_data: dict) -> None:
         
         keys = user_data.keys() 
         
@@ -60,48 +54,38 @@ class UserController():
         
         for key in keys:
             if key not in ["firstName", "lastName", "birthYear", "group"]:
-                status_code = 400
-                return self.custom_responses[status_code], status_code
+                raise BadRequest
         
         if id not in self._repository.get_users():
-            status_code = 400
-            return self.custom_responses[status_code], status_code
+            raise BadRequest
         
         if (data := "firstName") in keys:
             if type(user_data[data]) == str:
                 changes[self._repository.change_first_name] = user_data[data] 
             else:
-                status_code = 400
-                return self.custom_responses[status_code], status_code
+                raise BadRequest
         
         if (data := "lastName") in keys:
             if type(user_data[data]) == str:
                 changes[self._repository.change_last_name] = user_data[data]
             else:
-                status_code = 400
-                return self.custom_responses[status_code], status_code
+                raise BadRequest
         
         if (data := "birthYear") in keys:
             if type(user_data[data]) == int:                
                 changes[self._repository.change_birth_year] = user_data[data]
             
             else:
-                status_code = 400
-                return self.custom_responses[status_code], status_code 
+                raise BadRequest
         
         if (data := "group") in keys:
-            if user_data[data] in self._repository.group_values:
+            if user_data[data] in ['user', "admin", "premium"]:
                 changes[self._repository.change_group] = user_data[data]
-            
             else:
-                status_code = 400
-                return self.custom_responses[status_code], status_code
+                raise BadRequest
         
         if changes:
             for changer, arg in changes.items():
                 changer(id, arg)
-            status_code = 200
-            return self.custom_responses[status_code], status_code
         else:
-            status_code = 400
-            return self.custom_responses[status_code], status_code
+            raise BadRequest
