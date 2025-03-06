@@ -8,7 +8,7 @@ class User():
     
     def __eq__(self, value) -> bool:
         if isinstance(value, User):
-            return self.id == value.id
+            return self.id == value.id and self.first_name == value.first_name and self.last_name == value.last_name and self.birth_year == value.birth_year and self.group == value.group
         elif isinstance(value, int|float):
             return self.id == value 
         else:
